@@ -1,5 +1,6 @@
 import { getAnthropicClient, AI_MODEL, MAX_TOKENS } from '@/lib/ai/client';
 import { getSystemPrompt } from '@/lib/ai/prompts';
+import { hasApiKey, streamFallback, getToolFallback } from '@/lib/ai/fallback';
 
 export async function POST(req: Request) {
   try {
@@ -7,6 +8,10 @@ export async function POST(req: Request) {
 
     if (!input || !tool) {
       return Response.json({ error: 'Input and tool are required' }, { status: 400 });
+    }
+
+    if (!hasApiKey()) {
+      return streamFallback(getToolFallback(tool, input));
     }
 
     const systemPrompt = getSystemPrompt(tool, subType);

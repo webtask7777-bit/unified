@@ -1,5 +1,6 @@
 import { getAnthropicClient, AI_MODEL } from '@/lib/ai/client';
 import { getSystemPrompt } from '@/lib/ai/prompts';
+import { hasApiKey, streamFallback, getDiscoveryFallback } from '@/lib/ai/fallback';
 
 export async function POST(req: Request) {
   try {
@@ -7,6 +8,10 @@ export async function POST(req: Request) {
 
     if (!messages || !Array.isArray(messages) || messages.length === 0) {
       return Response.json({ error: 'messages are required' }, { status: 400 });
+    }
+
+    if (!hasApiKey()) {
+      return streamFallback(getDiscoveryFallback());
     }
 
     const prompt = getSystemPrompt('discovery');

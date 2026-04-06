@@ -1,6 +1,7 @@
 import { getAnthropicClient, AI_MODEL, MAX_TOKENS } from '@/lib/ai/client';
 import { getCollabPrompt } from '@/lib/ai/collabPrompts';
 import { CollabId } from '@/lib/collabData';
+import { hasApiKey, streamFallback, getCollabFallback } from '@/lib/ai/fallback';
 
 export async function POST(req: Request) {
   try {
@@ -8,6 +9,10 @@ export async function POST(req: Request) {
 
     if (!collabId || !messages || !Array.isArray(messages) || messages.length === 0) {
       return Response.json({ error: 'collabId and messages are required' }, { status: 400 });
+    }
+
+    if (!hasApiKey()) {
+      return streamFallback(getCollabFallback());
     }
 
     const prompt = getCollabPrompt(collabId as CollabId);

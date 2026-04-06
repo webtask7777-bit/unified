@@ -1,6 +1,7 @@
 import { getAnthropicClient, AI_MODEL, MAX_TOKENS } from '@/lib/ai/client';
 import { getChatPrompt } from '@/lib/ai/chatPrompts';
 import { ScientistId } from '@/lib/scientistProfiles';
+import { hasApiKey, streamFallback, getChatFallback } from '@/lib/ai/fallback';
 
 export async function POST(req: Request) {
   try {
@@ -8,6 +9,10 @@ export async function POST(req: Request) {
 
     if (!scientist || !messages || !Array.isArray(messages) || messages.length === 0) {
       return Response.json({ error: 'scientist and messages are required' }, { status: 400 });
+    }
+
+    if (!hasApiKey()) {
+      return streamFallback(getChatFallback(scientist));
     }
 
     const prompt = getChatPrompt(scientist as ScientistId);
