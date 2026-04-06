@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import { useDiscoveryChat } from '@/hooks/useDiscoveryChat';
+import { useVoice, VoiceControls, SpeakButton } from '@/hooks/useVoice';
 import { DISCOVERY_CHIPS } from '@/lib/constants';
 import ScientistBadge from '@/components/shared/ScientistBadge';
 import { formatArticleHtml } from '@/lib/formatArticle';
@@ -22,17 +23,30 @@ const DOMAINS = [
 export default function DiscoveryEngine() {
   const [input, setInput] = useState('');
   const { messages, isLoading, streamingContent, error, sendMessage, resetChat } = useDiscoveryChat();
+  const voice = useVoice('discovery');
   const chatEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, streamingContent]);
 
-  const handleSubmit = () => {
+  // Auto-speak new responses
+  const lastMsgCount = useRef(0);
+  useEffect(() => {
+    if (messages.length > lastMsgCount.current && messages.length > 0) {
+      const last = messages[messages.length - 1];
+      if (last.role === 'assistant' && voice.voiceOn) {
+        voice.speak(last.content);
+      }
+    }
+    lastMsgCount.current = messages.length;
+  }, [messages]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleSubmit = useCallback(() => {
     if (!input.trim() || isLoading) return;
     sendMessage(input);
     setInput('');
-  };
+  }, [input, isLoading, sendMessage]);
 
   const handleChipSelect = (value: string) => {
     if (isLoading) return;
@@ -88,15 +102,23 @@ export default function DiscoveryEngine() {
               {messages.length === 0 ? 'Naya session' : `${Math.ceil(messages.length / 2)} discoveries`}
             </span>
           </div>
-          {messages.length > 0 && (
-            <button
-              onClick={resetChat}
-              className="text-[12px] py-1 px-2.5 rounded-lg border cursor-pointer transition-all hover:opacity-80"
-              style={{ background: 'none', borderColor: 'var(--bd2)', color: 'var(--t3)', fontFamily: 'inherit' }}
-            >
-              Naya Research
-            </button>
-          )}
+          <div className="flex items-center gap-2">
+            <VoiceControls
+              voiceOn={voice.voiceOn} isSpeaking={voice.isSpeaking} isPaused={voice.isPaused}
+              speed={voice.speed} onToggle={voice.toggleVoice} onStop={voice.stop}
+              onPause={voice.pause} onResume={voice.resume} onCycleSpeed={voice.cycleSpeed}
+              color="var(--amber)" compact
+            />
+            {messages.length > 0 && (
+              <button
+                onClick={() => { voice.stop(); resetChat(); }}
+                className="text-[12px] py-1 px-2.5 rounded-lg border cursor-pointer transition-all hover:opacity-80"
+                style={{ background: 'none', borderColor: 'var(--bd2)', color: 'var(--t3)', fontFamily: 'inherit' }}
+              >
+                Naya Research
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Messages */}
@@ -121,7 +143,8 @@ export default function DiscoveryEngine() {
                 <div className="rounded-xl border border-bd p-3.5" style={{ background: 'var(--bg3)', borderLeft: '3px solid var(--amber)' }}>
                   <div className="flex items-center gap-1.5 mb-2">
                     <span className="text-sm">🔬</span>
-                    <span className="text-[11px] font-medium" style={{ color: 'var(--amber)' }}>Discovery Note #{Math.ceil((i + 1) / 2)}</span>
+                    <span className="text-[11px] font-medium flex-1" style={{ color: 'var(--amber)' }}>Discovery Note #{Math.ceil((i + 1) / 2)}</span>
+                    <SpeakButton text={msg.content} voiceId="discovery" color="var(--amber)" size={13} />
                   </div>
                   <div
                     className="text-[13px] leading-[1.9]"

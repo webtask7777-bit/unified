@@ -4,53 +4,13 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { SCIENTIST_PROFILES, ScientistId, SCIENTIST_IDS } from '@/lib/scientistProfiles';
 import { useScientistChat } from '@/hooks/useScientistChat';
 import { useCollabChat } from '@/hooks/useCollabChat';
+import { useVoice, VoiceControls, SpeakButton } from '@/hooks/useVoice';
 import { COLLAB_TRACKS, CollabId } from '@/lib/collabData';
 import ScientistPortrait from '@/components/shared/ScientistPortrait';
-
-/* ── Voice Config per scientist ── */
-const VOICE_CONFIG: Record<string, { rate: number; pitch: number; lang: string }> = {
-  newton:   { rate: 0.92, pitch: 0.9,  lang: 'en-GB' },
-  einstein: { rate: 0.95, pitch: 0.85, lang: 'en-US' },
-  ramanujan:{ rate: 0.90, pitch: 1.0,  lang: 'en-IN' },
-  bose:     { rate: 0.88, pitch: 0.95, lang: 'en-IN' },
-  noether:  { rate: 0.94, pitch: 1.1,  lang: 'en-US' },
-  galileo:  { rate: 0.93, pitch: 0.88, lang: 'en-US' },
-  curie:    { rate: 0.90, pitch: 1.05, lang: 'en-US' },
-  tesla:    { rate: 0.96, pitch: 0.82, lang: 'en-US' },
-  hawking:  { rate: 0.78, pitch: 0.7,  lang: 'en-GB' },
-  feynman:  { rate: 1.05, pitch: 1.0,  lang: 'en-US' },
-  planck:   { rate: 0.88, pitch: 0.85, lang: 'en-US' },
-  bohr:     { rate: 0.90, pitch: 0.9,  lang: 'en-GB' },
-  maxwell:  { rate: 0.90, pitch: 0.88, lang: 'en-GB' },
-  raman:    { rate: 0.92, pitch: 0.95, lang: 'en-IN' },
-  faraday:  { rate: 0.90, pitch: 0.92, lang: 'en-GB' },
-};
 
 /* ── Scientist Avatar (uses 2D portrait for larger sizes) ── */
 function ScientistAvatar({ id, size = 80 }: { id: ScientistId; size?: number }) {
   return <ScientistPortrait id={id} size={size} />;
-}
-
-/* ── Speak function ── */
-function speak(text: string, scientistId: string, voiceOn: boolean) {
-  if (!voiceOn || typeof window === 'undefined' || !window.speechSynthesis) return;
-  window.speechSynthesis.cancel();
-  const clean = text.replace(/[*#_`~>|]/g, '').replace(/\n+/g, '. ').slice(0, 800);
-  const utter = new SpeechSynthesisUtterance(clean);
-  const cfg = VOICE_CONFIG[scientistId] || VOICE_CONFIG.newton;
-  utter.rate = cfg.rate;
-  utter.pitch = cfg.pitch;
-  utter.lang = cfg.lang;
-  const voices = window.speechSynthesis.getVoices();
-  const preferred = voices.find(v => v.lang.startsWith(cfg.lang.split('-')[0]) && v.name.toLowerCase().includes('male') === (scientistId !== 'noether' && scientistId !== 'curie'));
-  if (preferred) utter.voice = preferred;
-  window.speechSynthesis.speak(utter);
-}
-
-function stopSpeaking() {
-  if (typeof window !== 'undefined' && window.speechSynthesis) {
-    window.speechSynthesis.cancel();
-  }
 }
 
 /* ── Escape HTML ── */
@@ -94,12 +54,11 @@ export default function ScientistChat() {
   const [collabId, setCollabId] = useState<CollabId>('newton-einstein');
   const [showGallery, setShowGallery] = useState(false);
   const [input, setInput] = useState('');
-  const [voiceOn, setVoiceOn] = useState(true);
-  const [isSpeaking, setIsSpeaking] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
   const soloChat = useScientistChat();
   const collabChat = useCollabChat();
+  const voice = useVoice(selected);
   const chat = mode === 'solo' ? soloChat : collabChat;
   const { messages, isLoading, streamingContent, error } = chat;
 
@@ -116,18 +75,9 @@ export default function ScientistChat() {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, streamingContent]);
 
-  // Track speechSynthesis state
-  useEffect(() => {
-    if (typeof window === 'undefined' || !window.speechSynthesis) return;
-    const interval = setInterval(() => {
-      setIsSpeaking(window.speechSynthesis.speaking);
-    }, 200);
-    return () => clearInterval(interval);
-  }, []);
-
   // Stop speech on scientist/mode change
   useEffect(() => {
-    stopSpeaking();
+    voice.stop();
     soloChat.resetChat();
     collabChat.resetChat();
   }, [selected, mode, collabId]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -139,12 +89,12 @@ export default function ScientistChat() {
     let response: string | null;
     if (mode === 'solo') {
       response = await soloChat.sendMessage(text, selected);
-      if (response) speak(response, selected, voiceOn);
+      if (response && voice.voiceOn) voice.speak(response, selected);
     } else {
       response = await collabChat.sendMessage(text, collabId);
-      if (response && currentTrack) speak(response, currentTrack.scientists[0], voiceOn);
+      if (response && currentTrack && voice.voiceOn) voice.speak(response, currentTrack.scientists[0]);
     }
-  }, [input, isLoading, mode, soloChat, collabChat, selected, collabId, voiceOn, currentTrack]);
+  }, [input, isLoading, mode, soloChat, collabChat, selected, collabId, voice, currentTrack]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
@@ -366,33 +316,20 @@ export default function ScientistChat() {
               </>
             )}
           </div>
-          <div style={{ display: 'flex', gap: 6 }}>
-            {/* Voice toggle */}
-            <button onClick={() => { setVoiceOn(!voiceOn); if (voiceOn) stopSpeaking(); }} style={{
-              background: voiceOn ? activeColor + '22' : 'var(--bg3)',
-              border: `1px solid ${voiceOn ? activeColor : 'var(--bd)'}`,
-              borderRadius: 8, padding: '6px 12px', cursor: 'pointer',
-              color: voiceOn ? activeColor : 'var(--t3)', fontSize: 12, display: 'flex', alignItems: 'center', gap: 4,
-            }}>
-              {voiceOn ? '🔊' : '🔇'} Voice
-            </button>
-            {/* Stop speaking */}
-            {isSpeaking && (
-              <button onClick={stopSpeaking} style={{
-                background: 'var(--bg3)', border: '1px solid var(--bd)',
-                borderRadius: 8, padding: '6px 10px', cursor: 'pointer',
-                color: 'var(--coral)', fontSize: 12,
-              }}>
-                ⏹ Stop
-              </button>
-            )}
+          <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+            <VoiceControls
+              voiceOn={voice.voiceOn} isSpeaking={voice.isSpeaking} isPaused={voice.isPaused}
+              speed={voice.speed} onToggle={voice.toggleVoice} onStop={voice.stop}
+              onPause={voice.pause} onResume={voice.resume} onCycleSpeed={voice.cycleSpeed}
+              color={activeColor}
+            />
             {/* Reset */}
-            <button onClick={() => { chat.resetChat(); stopSpeaking(); }} style={{
+            <button onClick={() => { chat.resetChat(); voice.stop(); }} style={{
               background: 'var(--bg3)', border: '1px solid var(--bd)',
               borderRadius: 8, padding: '6px 10px', cursor: 'pointer',
               color: 'var(--t3)', fontSize: 12,
             }}>
-              🗑️ Clear
+              Clear
             </button>
           </div>
         </div>
@@ -470,17 +407,15 @@ export default function ScientistChat() {
                 <div className="resp-body" style={{ fontSize: 13, lineHeight: 1.6 }}
                   dangerouslySetInnerHTML={{ __html: escapeHtml(msg.content) }}
                 />
-                {/* Re-speak button for assistant messages */}
-                {msg.role === 'assistant' && voiceOn && (
-                  <button onClick={() => {
-                    const speakId = mode === 'solo' ? selected : (currentTrack?.scientists[0] || 'newton');
-                    speak(msg.content, speakId, true);
-                  }} style={{
-                    background: 'none', border: 'none', color: activeColor, cursor: 'pointer',
-                    fontSize: 11, marginTop: 4, padding: 0, opacity: 0.6,
-                  }}>
-                    🔊 Phir sunao
-                  </button>
+                {msg.role === 'assistant' && (
+                  <div style={{ marginTop: 4 }}>
+                    <SpeakButton
+                      text={msg.content}
+                      voiceId={mode === 'solo' ? selected : (currentTrack?.scientists[0] || 'newton')}
+                      color={activeColor}
+                      size={13}
+                    />
+                  </div>
                 )}
               </div>
             </div>

@@ -1,6 +1,7 @@
 'use client';
 
 import LoadingDots from './LoadingDots';
+import { SpeakButton } from '@/hooks/useVoice';
 
 interface ResponsePanelProps {
   isLoading: boolean;
@@ -11,6 +12,7 @@ interface ResponsePanelProps {
   scientistRole: string;
   emptyIcon: string;
   emptyText: string;
+  voiceId?: string;
 }
 
 function escapeHtml(s: string): string {
@@ -20,7 +22,7 @@ function escapeHtml(s: string): string {
 export default function ResponsePanel({
   isLoading, response, error,
   scientistName, scientistIcon, scientistRole,
-  emptyIcon, emptyText,
+  emptyIcon, emptyText, voiceId,
 }: ResponsePanelProps) {
   if (error) {
     return (
@@ -53,10 +55,11 @@ export default function ResponsePanel({
         <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm">
           {scientistIcon}
         </div>
-        <div>
+        <div className="flex-1">
           <div className="text-xs font-medium">{scientistName}</div>
           <div className="text-[12px]" style={{ color: 'var(--t2)' }}>{scientistRole}</div>
         </div>
+        {response && <SpeakButton text={response} voiceId={voiceId} />}
       </div>
       {isLoading && !response ? (
         <div className="flex items-center gap-2.5 py-1.5">
