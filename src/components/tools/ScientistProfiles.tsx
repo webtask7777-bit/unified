@@ -79,6 +79,40 @@ function RealProfileTab({ p }: { p: ScientistProfile }) {
         </div>
       </Section>
 
+      {/* 2026 Naya Khoj — Original Research */}
+      {p.nayaKhoj.length > 0 && (
+        <Section icon="🔬" title="2026 NAYA KHOJ — Original Research Hypotheses" color="var(--amber)">
+          <div className="flex flex-col gap-3">
+            {p.nayaKhoj.map((k, i) => (
+              <div key={i} className="border rounded-xl p-3.5" style={{ background: 'var(--bg3)', borderColor: 'var(--amber)', borderLeft: '3px solid var(--amber)' }}>
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-[11px] py-0.5 px-2 rounded-full font-medium" style={{ background: 'var(--adim)', color: 'var(--amber)' }}>
+                    NOVEL — {k.novelty}/10
+                  </span>
+                  <span className="text-[12px] font-semibold" style={{ color: 'var(--t1)' }}>{k.title}</span>
+                </div>
+                <div className="text-[12px] mb-1.5" style={{ color: 'var(--t3)' }}>
+                  <strong style={{ color: 'var(--coral)' }}>Gap:</strong> {k.gap}
+                </div>
+                <div className="text-[12px] mb-1.5" style={{ color: 'var(--t2)' }}>
+                  <strong style={{ color: 'var(--amber)' }}>Hypothesis:</strong> {k.hypothesis}
+                </div>
+                <div className="text-[12px] mb-2 p-2 rounded-lg" style={{ background: 'var(--bg)', color: 'var(--green)' }}>
+                  <strong>Prediction:</strong> {k.prediction}
+                </div>
+                <div className="flex gap-1.5 flex-wrap">
+                  {k.domains.map((d, j) => (
+                    <span key={j} className="text-[11px] px-2 py-0.5 rounded-full" style={{ background: 'var(--bg)', color: 'var(--t3)' }}>
+                      {d}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </Section>
+      )}
+
       {/* Key Equations */}
       <Section icon="📐" title="Key Equations" color={p.color}>
         <div className="flex flex-col gap-2">

@@ -20,6 +20,15 @@ export interface Discovery {
   equation?: string;
 }
 
+export interface NayaKhoj {
+  title: string;
+  gap: string;
+  hypothesis: string;
+  prediction: string;
+  novelty: number;
+  domains: string[];
+}
+
 export interface ScientistProfile {
   id: ScientistId;
   fullName: string;
@@ -44,6 +53,7 @@ export interface ScientistProfile {
   researchFocus: string[];
   timeline: TimelineEvent[];
   quickStats: { label: string; value: string; icon: string }[];
+  nayaKhoj: NayaKhoj[];
 }
 
 export const SCIENTIST_IDS: ScientistId[] = ['newton', 'einstein', 'ramanujan', 'bose', 'noether', 'galileo', 'curie', 'tesla', 'hawking', 'feynman', 'planck', 'bohr', 'maxwell', 'raman', 'faraday'];
@@ -151,6 +161,25 @@ export const SCIENTIST_PROFILES: Record<ScientistId, ScientistProfile> = {
       { label: 'Lucasian Prof Age', value: '26', icon: '🎓' },
       { label: 'RS President Years', value: '24', icon: '👑' },
     ],
+
+    nayaKhoj: [
+      {
+        title: 'Fuzzy Dark Matter via BEC Gravitational Condensate',
+        gap: 'Dark matter ka particle nature unknown — WIMP searches 40 saal se null results.',
+        hypothesis: 'Agar dark matter ultralight bosons (m ~ 10⁻²² eV) hain jo Bose-Einstein condensate banate hain, toh Newton ki gravity + quantum pressure ka balance ek "fuzzy" halo predict karta hai jo small-scale structure problems solve kare.',
+        prediction: '21cm hydrogen line power spectrum mein k > 10 Mpc⁻¹ pe 40% suppression — SKA telescope se 2028 tak measurable.',
+        novelty: 8,
+        domains: ['Newton (gravity)', 'Bose (BEC statistics)'],
+      },
+      {
+        title: 'Gravitational Anomaly Pattern Recognition for Sub-halo Detection',
+        gap: 'Dark matter sub-halos (10⁶ M☉ clumps) direct detect nahi ho rahe — gravitational lensing resolution insufficient.',
+        hypothesis: 'AI-driven pattern recognition on GRACE/GOCE gravity data + stellar stream perturbations se sub-halo positions triangulate ho sakte hain — Newton ki classical gravity deviations mein hidden signal hai.',
+        prediction: 'Milky Way mein 100-500 sub-halos (mass > 10⁷ M☉) detectable hain within 50 kpc — Gaia DR4 stellar stream data se 2027 mein verify hoga.',
+        novelty: 7,
+        domains: ['Newton (gravity mapping)', 'Einstein (lensing)'],
+      },
+    ],
   },
 
   /* ─────────────────── EINSTEIN ─────────────────── */
@@ -255,6 +284,25 @@ export const SCIENTIST_PROFILES: Record<ScientistId, ScientistProfile> = {
       { label: 'Published Papers', value: '300+', icon: '📚' },
       { label: 'Person of Century', value: '1999', icon: '⚡' },
     ],
+
+    nayaKhoj: [
+      {
+        title: 'Quantum Time Superposition in Curved Spacetime',
+        gap: 'Quantum clocks ka behavior strong gravitational fields mein — kya superposition of time dilation possible hai?',
+        hypothesis: 'BEC clock (Bose) ko curved spacetime (Einstein) mein rakhein toh macroscopic quantum time superposition observe hogi — ek "time crystal" in gravitational field jo GR aur QM ko directly couple kare.',
+        prediction: 'Space-based BEC experiment mein altitude vary karte hue, BEC coherence time mein 10⁻¹⁵ fractional deviation dikhegi jo standard GR se match nahi karega — ISS CAL experiment se 2028 tak testable.',
+        novelty: 9,
+        domains: ['Einstein (GR)', 'Bose (BEC)'],
+      },
+      {
+        title: 'Casimir Energy Amplification Near Massive Objects',
+        gap: 'Exotic matter (negative energy) sustain karna impossible lagta hai — Casimir effect bahut weak hai.',
+        hypothesis: 'Noether ki conformal symmetry + Einstein ki curved spacetime mein Casimir effect AMPLIFY hota hai — gravitational field strength ke saath negative energy density scale karti hai.',
+        prediction: 'Casimir force measurement near massive objects (e.g., tungsten sphere, 100 kg) mein 10⁻⁸ fractional enhancement — precision Casimir experiments in microgravity se 2029 tak measurable.',
+        novelty: 8,
+        domains: ['Einstein (curved spacetime)', 'Noether (conformal symmetry)'],
+      },
+    ],
   },
 
   /* ─────────────────── RAMANUJAN ─────────────────── */
@@ -358,6 +406,25 @@ export const SCIENTIST_PROFILES: Record<ScientistId, ScientistProfile> = {
       { label: 'Hardy-Ramanujan No.', value: '1729', icon: '🚕' },
       { label: 'Lived Years', value: '32', icon: '🕊️' },
     ],
+
+    nayaKhoj: [
+      {
+        title: 'Mock Theta Functions se Quantum Phase Transition ka Exact Solution',
+        gap: 'Quantum phase transitions ke partition functions approximate hain — exact analytical solutions nahi milte.',
+        hypothesis: 'Mock theta functions (Ramanujan, 1920) quantum statistical mechanics ke partition functions ko EXACTLY solve kar sakte hain — classical approximations skip karke direct exact result.',
+        prediction: '⁴He superfluidity ke lambda point (2.17K) pe specific heat mein logarithmic correction: C ~ -A×log|T-T_λ| + B×f(q) jahan f(q) = mock theta — coefficient 10⁻⁶ precision tak measurable.',
+        novelty: 9,
+        domains: ['Ramanujan (mock theta)', 'Bose (quantum statistics)'],
+      },
+      {
+        title: '3-Body Choreography Classification via Modular Forms',
+        gap: '3-body problem ka general solution nahi hai — sirf specific periodic orbits known hain (13 families).',
+        hypothesis: 'Har periodic 3-body orbit ek modular form se correspond karti hai — Ramanujan ke modular equations se systematically enumerate ho sakte hain sab possible choreographies.',
+        prediction: '14th choreography family exist karegi with period ratio √5:2 — numerical simulation se verify ho sakta hai within 2027.',
+        novelty: 8,
+        domains: ['Ramanujan (modular forms)', 'Newton (3-body problem)'],
+      },
+    ],
   },
 
   /* ─────────────────── BOSE ─────────────────── */
@@ -456,6 +523,25 @@ export const SCIENTIST_PROFILES: Record<ScientistId, ScientistProfile> = {
       { label: 'Padma Vibhushan', value: '1954', icon: '🏅' },
       { label: 'BEC Verified', value: '1995', icon: '❄️' },
       { label: 'Higgs "Boson"', value: '2012', icon: '🔬' },
+    ],
+
+    nayaKhoj: [
+      {
+        title: 'Gravitational Decoherence Rate for Macroscopic Entanglement',
+        gap: 'Gravity ka quantum entanglement pe effect — kya gravitational field entanglement destroy karta hai, aur kitna fast?',
+        hypothesis: 'Einstein ke equivalence principle + Bose statistics combine karein toh gravitational decoherence rate precisely predictable hai: Γ = 8πGm²Δx²/(ℏc) — yeh rate altitude-dependent hoga.',
+        prediction: 'Space-based BEC experiment mein altitude-dependent entanglement lifetime variation: Δτ/τ ~ 10⁻⁷ per meter altitude change — ISS vs ground comparison se 2028 tak testable.',
+        novelty: 9,
+        domains: ['Bose (BEC/entanglement)', 'Einstein (equivalence principle)'],
+      },
+      {
+        title: 'Boson Condensate as Dark Matter with Observable Quantum Signatures',
+        gap: 'Dark matter candidates (WIMP, axion) mein koi quantum collective behavior predict nahi karta at galactic scale.',
+        hypothesis: 'Agar dark matter ultralight bosons hain (m ~ 10⁻²² eV), toh galactic-scale BEC banegi — Bose-Einstein statistics predict karti hai ki dark matter halo mein quantum interference patterns dikhenge.',
+        prediction: 'Galaxy rotation curves mein periodic oscillation (period ~ 1-5 kpc) jo NFW profile se deviate kare — existing SPARC data mein already hidden hai, re-analysis se 2027 mein verify hoga.',
+        novelty: 8,
+        domains: ['Bose (BEC)', 'Newton (galactic dynamics)'],
+      },
     ],
   },
 
@@ -557,6 +643,25 @@ export const SCIENTIST_PROFILES: Record<ScientistId, ScientistProfile> = {
       { label: 'Einstein\'s Words', value: '"Greatest"', icon: '⭐' },
       { label: 'Lived Years', value: '53', icon: '🕊️' },
     ],
+
+    nayaKhoj: [
+      {
+        title: 'GUT Phase Transition Gravitational Wave Signature',
+        gap: 'Grand Unified Theory ka phase transition (10⁻³⁶ s after Big Bang) ka direct evidence nahi mila — gravitational wave background mein chhupa hai.',
+        hypothesis: 'Noether ke symmetry breaking analysis + Ramanujan partition functions se GUT transition ke possible breaking patterns enumerate ho sakte hain — har pattern ek UNIQUE gravitational wave spectral signature deta hai.',
+        prediction: 'Pulsar Timing Arrays (NANOGrav) mein nHz GW signal ka spectral index n_T = -0.3 ± 0.1 hona chahiye agar GUT-origin hai — distinguishable from SMBH mergers (n_T = -2/3). Data already exists, re-analysis 2027.',
+        novelty: 9,
+        domains: ['Noether (symmetry breaking)', 'Einstein (gravitational waves)'],
+      },
+      {
+        title: 'Symmetry-Optimized Plasma Confinement for Fusion',
+        gap: 'Fusion reactor mein plasma instabilities (turbulence) — confinement time insufficient for commercial fusion.',
+        hypothesis: 'Noether ke theorem ka inverse: agar specific symmetry IMPOSE karein (helical + conformal), toh conservation laws turbulence ko naturally suppress karengi — BEC-like ordered state emerge hoga hot plasma mein.',
+        prediction: 'Stellarator with Noether-optimized helical coils mein energy confinement time τ_E > 3 seconds at reactor-relevant density — 3× improvement over current designs. Testable in W7-X upgrade.',
+        novelty: 8,
+        domains: ['Noether (symmetry)', 'Bose (condensation principles)'],
+      },
+    ],
   },
 
   /* ─────────────────── GALILEO ─────────────────── */
@@ -620,6 +725,7 @@ export const SCIENTIST_PROFILES: Record<ScientistId, ScientistProfile> = {
       { label: 'Church Apology', value: '1992', icon: '⛪' },
       { label: 'Lived Years', value: '77', icon: '🕊️' },
     ],
+    nayaKhoj: [],
   },
 
   /* ─────────────────── CURIE ─────────────────── */
@@ -685,6 +791,7 @@ export const SCIENTIST_PROFILES: Record<ScientistId, ScientistProfile> = {
       { label: 'First Woman Nobel', value: '1903', icon: '👑' },
       { label: 'Lived Years', value: '66', icon: '🕊️' },
     ],
+    nayaKhoj: [],
   },
 
   /* ─────────────────── TESLA ─────────────────── */
@@ -750,6 +857,7 @@ export const SCIENTIST_PROFILES: Record<ScientistId, ScientistProfile> = {
       { label: 'AC Won', value: '1893', icon: '⚡' },
       { label: 'Lived Years', value: '86', icon: '🕊️' },
     ],
+    nayaKhoj: [],
   },
 
   /* ─────────────────── HAWKING ─────────────────── */
@@ -814,6 +922,7 @@ export const SCIENTIST_PROFILES: Record<ScientistId, ScientistProfile> = {
       { label: 'Survived ALS', value: '55 yrs', icon: '💪' },
       { label: 'Lived Years', value: '76', icon: '🕊️' },
     ],
+    nayaKhoj: [],
   },
 
   /* ─────────────────── FEYNMAN ─────────────────── */
@@ -878,6 +987,7 @@ export const SCIENTIST_PROFILES: Record<ScientistId, ScientistProfile> = {
       { label: 'Feynman Lectures', value: '3 vols', icon: '📚' },
       { label: 'Lived Years', value: '69', icon: '🕊️' },
     ],
+    nayaKhoj: [],
   },
 
   /* ─────────────────── PLANCK ─────────────────── */
@@ -932,6 +1042,7 @@ export const SCIENTIST_PROFILES: Record<ScientistId, ScientistProfile> = {
       { label: 'Research Institutes', value: '80+', icon: '🏛️' },
       { label: 'Lived Years', value: '89', icon: '🕊️' },
     ],
+    nayaKhoj: [],
   },
 
   /* ─────────────────── BOHR ─────────────────── */
@@ -989,6 +1100,7 @@ export const SCIENTIST_PROFILES: Record<ScientistId, ScientistProfile> = {
       { label: 'Son\'s Nobel', value: '1975', icon: '👨‍👦' },
       { label: 'Lived Years', value: '77', icon: '🕊️' },
     ],
+    nayaKhoj: [],
   },
 
   /* ─────────────────── MAXWELL ─────────────────── */
@@ -1043,6 +1155,7 @@ export const SCIENTIST_PROFILES: Record<ScientistId, ScientistProfile> = {
       { label: 'Einstein\'s Hero', value: 'Yes', icon: '⭐' },
       { label: 'Lived Years', value: '48', icon: '🕊️' },
     ],
+    nayaKhoj: [],
   },
 
   /* ─────────────────── RAMAN ─────────────────── */
@@ -1099,6 +1212,7 @@ export const SCIENTIST_PROFILES: Record<ScientistId, ScientistProfile> = {
       { label: 'BA Age', value: '16', icon: '🎓' },
       { label: 'Sci Day India', value: '28 Feb', icon: '🇮🇳' },
     ],
+    nayaKhoj: [],
   },
 
   /* ─────────────────── FARADAY ─────────────────── */
@@ -1158,5 +1272,6 @@ export const SCIENTIST_PROFILES: Record<ScientistId, ScientistProfile> = {
       { label: 'RI Years', value: '50', icon: '🏛️' },
       { label: 'Lived Years', value: '75', icon: '🕊️' },
     ],
+    nayaKhoj: [],
   },
 };
