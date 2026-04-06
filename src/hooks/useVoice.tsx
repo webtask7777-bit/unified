@@ -3,10 +3,12 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 
 /* ── Premium Voice Selection ── */
-// Prioritize high-quality voices (Google, Samantha, Daniel, etc.)
+// Prioritize high-quality / Enhanced voices for natural sound
 const PREMIUM_VOICE_NAMES = [
-  'Google', 'Samantha', 'Daniel', 'Karen', 'Moira', 'Tessa',
-  'Rishi', 'Veena', 'Lekha', 'Microsoft', 'Natural', 'Neural',
+  'Enhanced', 'Premium', 'Natural', 'Neural',
+  'Samantha', 'Daniel', 'Karen', 'Moira', 'Tessa', 'Alex',
+  'Rishi', 'Veena', 'Lekha', 'Sangeeta',
+  'Google', 'Microsoft',
 ];
 
 const VOICE_PROFILES: Record<string, { rate: number; pitch: number; lang: string; gender: 'male' | 'female' }> = {
@@ -36,24 +38,43 @@ function findBestVoice(lang: string, gender: 'male' | 'female'): SpeechSynthesis
   if (voices.length === 0) return null;
 
   const langPrefix = lang.split('-')[0];
+  const isFemale = gender === 'female';
 
-  // 1. Try premium voice matching language
-  for (const prem of PREMIUM_VOICE_NAMES) {
-    const match = voices.find(v =>
-      v.name.includes(prem) && v.lang.startsWith(langPrefix)
-    );
-    if (match) return match;
-  }
+  // Score each voice — higher = better
+  const scored = voices
+    .filter(v => v.lang.startsWith(langPrefix) || v.lang.startsWith('en'))
+    .map(v => {
+      let score = 0;
+      const name = v.name.toLowerCase();
+      // Exact language match
+      if (v.lang === lang) score += 10;
+      else if (v.lang.startsWith(langPrefix)) score += 7;
+      else score += 2; // any English
 
-  // 2. Try any voice matching language
-  const langMatch = voices.find(v => v.lang.startsWith(langPrefix));
-  if (langMatch) return langMatch;
+      // Premium/Enhanced voices get huge boost
+      if (name.includes('enhanced')) score += 25;
+      if (name.includes('premium')) score += 22;
+      if (name.includes('natural')) score += 20;
+      if (name.includes('neural')) score += 18;
 
-  // 3. Any English voice
-  const enVoice = voices.find(v => v.lang.startsWith('en'));
-  if (enVoice) return enVoice;
+      // Named high-quality voices
+      for (const prem of PREMIUM_VOICE_NAMES) {
+        if (name.includes(prem.toLowerCase())) { score += 8; break; }
+      }
 
-  return voices[0];
+      // Gender matching (heuristic)
+      const femaleNames = ['samantha', 'karen', 'moira', 'tessa', 'veena', 'lekha', 'sangeeta', 'fiona', 'victoria', 'zira'];
+      const maleNames = ['daniel', 'alex', 'rishi', 'fred', 'david', 'mark', 'james'];
+      const isFemaleVoice = femaleNames.some(f => name.includes(f));
+      const isMaleVoice = maleNames.some(m => name.includes(m));
+      if (isFemale && isFemaleVoice) score += 5;
+      if (!isFemale && isMaleVoice) score += 5;
+
+      return { voice: v, score };
+    })
+    .sort((a, b) => b.score - a.score);
+
+  return scored.length > 0 ? scored[0].voice : voices[0];
 }
 
 /* ── Clean text for speech ── */
@@ -139,7 +160,8 @@ export function useVoice(voiceId: string = 'default') {
       const utter = utteranceQueue.current[currentIndex.current];
       utter.onend = () => {
         currentIndex.current++;
-        speakNext();
+        // Natural pause between sentences (150ms)
+        setTimeout(speakNext, 150);
       };
       utter.onerror = () => {
         currentIndex.current++;
