@@ -12,7 +12,8 @@ export async function POST(req: Request) {
     }
 
     if (!hasApiKey()) {
-      return streamFallback(getCollabFallback());
+      const lastMsg = messages[messages.length - 1]?.content || '';
+      return streamFallback(getCollabFallback(lastMsg));
     }
 
     const prompt = getCollabPrompt(collabId as CollabId);

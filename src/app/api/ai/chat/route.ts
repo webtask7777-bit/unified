@@ -12,7 +12,8 @@ export async function POST(req: Request) {
     }
 
     if (!hasApiKey()) {
-      return streamFallback(getChatFallback(scientist));
+      const lastMsg = messages[messages.length - 1]?.content || '';
+      return streamFallback(getChatFallback(scientist, lastMsg));
     }
 
     const prompt = getChatPrompt(scientist as ScientistId);

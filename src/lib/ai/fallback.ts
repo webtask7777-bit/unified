@@ -715,25 +715,31 @@ Correction terms mein higher-order curvature terms, non-minimal couplings, aur q
 **Next Step:** Specific aspect choose karo — mathematical structure, experimental tests, ya cosmological implications? 🧬`
 ];
 
+import { generateResponse, generateChatResponse, generateDiscoveryResponse } from './engine';
+
 export function getToolFallback(tool: string, input: string): string {
-  const responses = TOOL_FALLBACKS[tool] || RESEARCHLAB;
-  return pick(responses, input);
+  // Use intelligent engine — keyword matching + physics computation
+  return generateResponse(tool, input);
 }
 
-export function getChatFallback(scientist: string): string {
+export function getChatFallback(scientist: string, input?: string): string {
+  if (input) return generateChatResponse(scientist, input);
   const responses = SCIENTIST_CHAT[scientist];
   if (responses) return responses[0];
   return SCIENTIST_CHAT.newton[0];
 }
 
-export function getDiscoveryFallback(): string {
+export function getDiscoveryFallback(input?: string): string {
+  if (input) return generateDiscoveryResponse(input);
   return DISCOVERY_CHAT[0];
 }
 
-export function getCollabFallback(): string {
+export function getCollabFallback(input?: string): string {
+  if (input) return generateChatResponse('newton', input); // Use engine with newton as default
   return COLLAB_CHAT[0];
 }
 
-export function getGutFallback(): string {
+export function getGutFallback(input?: string): string {
+  if (input) return generateResponse('unifiedfield', input);
   return GUT_CHAT[0];
 }

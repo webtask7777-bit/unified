@@ -11,7 +11,8 @@ export async function POST(req: Request) {
     }
 
     if (!hasApiKey()) {
-      return streamFallback(getGutFallback());
+      const lastMsg = messages[messages.length - 1]?.content || '';
+      return streamFallback(getGutFallback(lastMsg));
     }
 
     const client = getAnthropicClient();

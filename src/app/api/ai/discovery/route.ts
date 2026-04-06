@@ -11,7 +11,8 @@ export async function POST(req: Request) {
     }
 
     if (!hasApiKey()) {
-      return streamFallback(getDiscoveryFallback());
+      const lastMsg = messages[messages.length - 1]?.content || '';
+      return streamFallback(getDiscoveryFallback(lastMsg));
     }
 
     const prompt = getSystemPrompt('discovery');
