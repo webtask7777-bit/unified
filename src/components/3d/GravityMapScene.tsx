@@ -210,6 +210,12 @@ function LensingArcs() {
     return result;
   }, []);
 
+  const lineObjs = useMemo(() => arcs.map(arc => {
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(arc.points, 3));
+    return new THREE.Line(geo, new THREE.LineBasicMaterial({ color: arc.color, transparent: true, opacity: 0.4 }));
+  }), [arcs]);
+
   useFrame(({ clock }) => {
     groupRef.current.children.forEach((child) => {
       const line = child as THREE.Line;
@@ -217,12 +223,6 @@ function LensingArcs() {
       mat.opacity = 0.3 + Math.sin(clock.getElapsedTime() * 2) * 0.15;
     });
   });
-
-  const lineObjs = useMemo(() => arcs.map(arc => {
-    const geo = new THREE.BufferGeometry();
-    geo.setAttribute('position', new THREE.BufferAttribute(arc.points, 3));
-    return new THREE.Line(geo, new THREE.LineBasicMaterial({ color: arc.color, transparent: true, opacity: 0.4 }));
-  }), [arcs]);
 
   return (
     <group ref={groupRef}>
