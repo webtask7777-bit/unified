@@ -1,65 +1,84 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import { useState, useEffect } from 'react';
+import { ToolId } from '@/lib/types';
+import Header from '@/components/layout/Header';
+import Sidebar from '@/components/layout/Sidebar';
+import MobileNav from '@/components/layout/MobileNav';
+import HomePanel from '@/components/tools/HomePanel';
+import DarkMatterDetector from '@/components/tools/DarkMatterDetector';
+import MotionPredictor from '@/components/tools/MotionPredictor';
+import TimeDilation from '@/components/tools/TimeDilation';
+import WormholeFeasibility from '@/components/tools/WormholeFeasibility';
+import FreeEnergy from '@/components/tools/FreeEnergy';
+import UnifiedFieldTheory from '@/components/tools/UnifiedFieldTheory';
+import SpacetimeMesh from '@/components/tools/SpacetimeMesh';
+import SymmetryBreaker from '@/components/tools/SymmetryBreaker';
+import InfiniteSeries from '@/components/tools/InfiniteSeries';
+import QuantumEntanglement from '@/components/tools/QuantumEntanglement';
+import DiscoveryEngine from '@/components/tools/DiscoveryEngine';
+import DishaNirdesh from '@/components/tools/DishaNirdesh';
+import ResearchLab from '@/components/tools/ResearchLab';
+import ScientistProfiles from '@/components/tools/ScientistProfiles';
+import AIBrain from '@/components/tools/AIBrain';
+import ScientistChat from '@/components/tools/ScientistChat';
+
+export default function UnifiedApp() {
+  const [activePanel, setActivePanel] = useState<ToolId>('home');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [showScrollTop, setShowScrollTop] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setShowScrollTop(window.scrollY > 400);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+    <>
+      <Header onMenuToggle={() => setMobileMenuOpen(true)} />
+      <MobileNav
+        isOpen={mobileMenuOpen}
+        onClose={() => setMobileMenuOpen(false)}
+        active={activePanel}
+        onNavigate={setActivePanel}
+      />
+      <div className="app-grid">
+        <Sidebar active={activePanel} onNavigate={setActivePanel} />
+        <main className="p-5 overflow-y-auto" style={{ minWidth: 0 }}>
+          <div className="max-w-4xl mx-auto">
+            {activePanel === 'home' && <HomePanel onNavigate={setActivePanel} />}
+            {activePanel === 'darkmatter' && <DarkMatterDetector />}
+            {activePanel === 'motion' && <MotionPredictor />}
+            {activePanel === 'timedilation' && <TimeDilation />}
+            {activePanel === 'wormhole' && <WormholeFeasibility />}
+            {activePanel === 'freeenergy' && <FreeEnergy />}
+            {activePanel === 'unifiedfield' && <UnifiedFieldTheory />}
+            {activePanel === 'spacetimemesh' && <SpacetimeMesh />}
+            {activePanel === 'symmetrybreaker' && <SymmetryBreaker />}
+            {activePanel === 'infiniteseries' && <InfiniteSeries />}
+            {activePanel === 'entanglement' && <QuantumEntanglement />}
+            {activePanel === 'discovery' && <DiscoveryEngine />}
+            {activePanel === 'dishanirdesh' && <DishaNirdesh />}
+            {activePanel === 'researchlab' && <ResearchLab />}
+            {activePanel === 'scientistprofiles' && <ScientistProfiles />}
+            {activePanel === 'aibrain' && <AIBrain />}
+            {activePanel === 'scientistchat' && <ScientistChat />}
+          </div>
+        </main>
+      </div>
+
+      {/* Scroll to top button */}
+      {showScrollTop && (
+        <button
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          className="fixed bottom-6 right-6 xl:right-[200px] w-10 h-10 rounded-full border border-bd2 flex items-center justify-center cursor-pointer transition-all hover:scale-110 active:scale-95 z-40"
+          style={{ background: 'var(--bg2)', color: 'var(--t2)', fontFamily: 'inherit', boxShadow: '0 4px 12px rgba(0,0,0,0.3)' }}
+          aria-label="Scroll to top"
+        >
+          ↑
+        </button>
+      )}
+    </>
   );
 }

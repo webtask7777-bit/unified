@@ -1,26 +1,315 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #09090f;
+  --bg2: #111119;
+  --bg3: #1a1a26;
+  --bd: rgba(255,255,255,0.07);
+  --bd2: rgba(255,255,255,0.14);
+  --t: #ddddf0;
+  --t2: #7878a0;
+  --t3: #3d3d58;
+  --blue: #5b8ff9;
+  --green: #3ecf8e;
+  --amber: #f5a623;
+  --purple: #a78bfa;
+  --coral: #f87060;
+  --teal: #38bdf8;
+  --bdim: rgba(91,143,249,0.13);
+  --gdim: rgba(62,207,142,0.12);
+  --adim: rgba(245,166,35,0.12);
+  --pdim: rgba(167,139,250,0.12);
+  --cdim: rgba(248,112,96,0.12);
+  --tdim: rgba(56,189,248,0.12);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-bg: var(--bg);
+  --color-bg2: var(--bg2);
+  --color-bg3: var(--bg3);
+  --color-bd: var(--bd);
+  --color-bd2: var(--bd2);
+  --color-t: var(--t);
+  --color-t2: var(--t2);
+  --color-t3: var(--t3);
+  --color-accent-blue: var(--blue);
+  --color-accent-green: var(--green);
+  --color-accent-amber: var(--amber);
+  --color-accent-purple: var(--purple);
+  --color-accent-coral: var(--coral);
+  --color-accent-teal: var(--teal);
+  --color-bdim: var(--bdim);
+  --color-gdim: var(--gdim);
+  --color-adim: var(--adim);
+  --color-pdim: var(--pdim);
+  --color-cdim: var(--cdim);
+  --color-tdim: var(--tdim);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--t);
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--bd2); border-radius: 2px; }
+
+/* Loading dots animation */
+@keyframes blink {
+  0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); }
+  40% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes pulse-ring {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.05); }
+}
+
+.dot { animation: blink 1.3s infinite ease-in-out; }
+.dot:nth-child(2) { animation-delay: 0.2s; }
+.dot:nth-child(3) { animation-delay: 0.4s; }
+
+/* Range slider */
+input[type=range] {
+  -webkit-appearance: none;
+  height: 3px;
+  background: var(--bd2);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+  width: 100%;
+}
+
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--blue);
+  cursor: pointer;
+}
+
+/* Textarea */
+textarea {
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--t);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  width: 100%;
+  resize: none;
+  line-height: 1.7;
+}
+
+textarea::placeholder { color: var(--t3); }
+
+/* Response text */
+.resp-body {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* App grid layout */
+.app-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  min-height: calc(100vh - 53px);
+}
+
+@media (min-width: 768px) {
+  .app-grid {
+    grid-template-columns: 240px 1fr;
+  }
+}
+
+/* Sidebar visibility */
+.sidebar-nav {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .sidebar-nav {
+    display: block;
+  }
+}
+
+/* Header hamburger */
+.hamburger-btn {
+  display: block;
+}
+
+@media (min-width: 768px) {
+  .hamburger-btn {
+    display: none;
+  }
+}
+
+/* Header pills */
+.header-pills {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .header-pills {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+}
+
+/* Home card grid */
+.home-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+@media (min-width: 768px) {
+  .home-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Feature grid */
+.feat-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+
+@media (min-width: 768px) {
+  .feat-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Metrics grid */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+/* 3D Scene frame */
+.scene-frame {
+  width: 100%;
+  height: 200px;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--bd2);
+  background: #0c0c14;
+  margin-bottom: 16px;
+}
+
+@media (min-width: 768px) {
+  .scene-frame {
+    height: 260px;
+  }
+}
+
+.scene-frame-tall {
+  width: 100%;
+  height: 300px;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--bd2);
+  background: #0c0c14;
+  margin-bottom: 16px;
+}
+
+@media (min-width: 768px) {
+  .scene-frame-tall {
+    height: 380px;
+  }
+}
+
+.scene-fullscreen {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 9999;
+  width: 100vw !important;
+  height: 100vh !important;
+  border-radius: 0 !important;
+  border: none !important;
+  margin: 0 !important;
+}
+
+/* 3D Scene control buttons */
+.scene-controls {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  gap: 4px;
+  z-index: 10;
+}
+
+.scene-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  border: 1px solid var(--bd2);
+  background: rgba(12, 12, 20, 0.75);
+  color: var(--t2);
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(8px);
+  transition: background 0.2s, color 0.2s;
+  padding: 0;
+}
+
+.scene-btn:hover {
+  background: rgba(26, 26, 38, 0.95);
+  color: var(--t);
+}
+
+/* AI Brain grids */
+.brain-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+@media (min-width: 768px) {
+  .brain-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.brain-nodes-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+@media (min-width: 640px) {
+  .brain-nodes-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.brain-memories-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+@media (min-width: 768px) {
+  .brain-memories-grid {
+    grid-template-columns: 1fr 1fr;
+  }
 }
